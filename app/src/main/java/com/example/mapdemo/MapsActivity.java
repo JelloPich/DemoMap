@@ -2,23 +2,24 @@ package com.example.mapdemo;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentActivity;
-
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -81,7 +83,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
                             MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(loc);
                             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 5);
+                            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 6);
                             gMap.animateCamera(cameraUpdate);
                             marker = gMap.addMarker(markerOptions);
                         }
@@ -126,12 +128,49 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
       this.gMap = googleMap;
-      LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLatitude());
-      MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location");
-      googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 3));
-        googleMap.addMarker(markerOptions);
+        // List of coordinates for multiple markers
+        LatLng bbu_phnomPenh = new LatLng(11.572293039790866, 104.88406391444144);
+        LatLng bbu_siemReap = new LatLng(13.348203866962697, 103.84636432622408);
+        LatLng bbu_battambang = new LatLng(13.117112828104181, 103.1996662279123);
+        LatLng bbu_TboungKhmum = new LatLng(11.990462771679471, 105.47901741550686);
+        LatLng bbb_Takeo = new LatLng(10.99376655993759, 104.78378351084113);
+        LatLng bbu_StungTreng = new LatLng(13.526985342434049, 105.97816469739136);
+        LatLng bbu_Ratanakiri = new LatLng(13.744567927019496, 106.98507982438011);
+        LatLng bbu_Sihanouk = new LatLng(10.633907559540587, 103.51239372617925);
+
+
+        // Adding multiple markers with custom drawables
+        gMap.addMarker(new MarkerOptions().position(bbu_phnomPenh).title("Marker in Phnom Penh")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_siemReap).title("Marker in Siem Reap")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_battambang).title("Marker in Battambang")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_TboungKhmum).title("Marker in Tboung Khmum")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbb_Takeo).title("Marker in Takeo")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_StungTreng).title("Marker in Stung Treng")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_Ratanakiri).title("Marker in Ratanakiri")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+        gMap.addMarker(new MarkerOptions().position(bbu_Sihanouk).title("Marker in Sihanouk")
+                .icon(bitmapDescriptorFromVector(R.drawable.school)));
+
+
+        // Move the camera to the first marker and set a zoom level
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bbu_phnomPenh, 7));
     }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(this, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
